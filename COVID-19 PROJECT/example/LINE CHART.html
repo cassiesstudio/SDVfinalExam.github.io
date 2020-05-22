@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="../build/nv.d3.css" rel="stylesheet" type="text/css">
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <script src="../build/nv.d3.js"></script>
+
+    <style>
+        text {
+            font: 12px sans-serif;
+        }
+        svg {
+            display: block;
+        }
+        html, body, svg {
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+            height: 100%;
+        }
+         #chart1 {
+            width:90%;
+            height:90%;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chart1">
+    <div style='margin-top:10px;margin-left:20px;'>
+        <div style='margin-bottom: 5px;'>Visualize the 2020 period COVID-19 pandemic, country to country.</div>
+        <div>This graph shows the confirmed cases with the selected country on specific date and the trend from the end of March to the middle of April.</div>
+    </div>   
+    <svg></svg>
+</div>
+<p style='width:90%;font-size: 10px;margin:auto;margin-top:20px;'>"Convert source data to json replacement plug-in, realize page rendering through d3 tool function. Data products for this study were accessed through the World Health Organization Data Center (WHODC), WHO-COVID-19-global-data and Covid-19 – Dataset-20200416 (Mandatory Dataset available on KEATS)."</p>
+<script>
+
+    // Wrapping in nv.addGraph allows for '0 timeout render', stores rendered charts in nv.graphs,
+    // and may do more in the future... it's NOT required
+    nv.addGraph(function() {
+        var chart = nv.models.lineChart()
+            .useInteractiveGuideline(true)
+            .x(function(d) { return d[0] })
+            .y(function(d) { return d[1] })
+            .color(d3.scale.category10().range())
+            .duration(300)
+            .clipVoronoi(false);
+        // chart.dispatch.on('renderEnd', function() {
+        //     console.log('render complete: cumulative line with guide line');
+        // });
+               
+         chart.xAxis
+         //.axisLabel("Convert source data to json replacement plug-in, realize page rendering through d3 tool function. Data products for this study were accessed through the World Health Organization Data Center (WHODC), WHO-COVID-19-global-data and Covid-19 – Dataset-20200416 (Mandatory Dataset available on KEATS).")
+         .tickFormat(function(d) {
+             return d3.time.format('%m/%d')(new Date(d))
+         });
+
+        
+
+        d3.select('#chart1 svg')
+            .datum(cumulativeTestData())
+            .call(chart);
+
+        //TODO: Figure out a good way to do this automatically
+        nv.utils.windowResize(chart.update);
+
+        //chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+        chart.state.dispatch.on('change', function(state){
+            nv.log('state', JSON.stringify(state));
+        });
+
+        return chart;
+    });
+
+    function flatTestData() {
+        return [{
+            key: "Snakes",
+            values: [0,1,2,3,4,5,6,7,8,9].map(function(d) {
+                var currentDate = new Date();
+                currentDate.setDate(currentDate.getDate() + d);
+                return [currentDate, 0]
+            })
+        }];
+    }
+
+    function cumulativeTestData() {
+        return [
+            {
+                key: "USA",
+                values: [ [ 1584936000000 , 16354] , [ 1585022400000 , 20341] , [ 1585108800000 , 0] , [ 1585195200000 , 16894] , [ 1585281600000 , 19093] , [ 1585368000000 , 19332] , [ 1585454400000 , 17987] , [ 1585540800000 , 22559] , [ 1585627200000 , 24103] , [ 1585713600000 , 26298] , [ 1585800000000 , 28103] , [ 1585886400000 , 26298] , [ 1585972800000 , 28103] , [ 1586059200000 , 32105] , [ 1586145600000 , 33510] , [ 1586232000000 , 26493] , [ 1586318400000 , 29510] , [ 1586404800000 , 31709] , [ 1586491200000 , 30859] , [ 1586577600000 , 35386] , [ 1586664000000 , 31606] , [ 1586750400000 , 31633] , [ 1586836800000 , 29308] , [ 1586923200000 , 24446] , ]
+            },
+            {
+                key: "UK",
+                values: [ [ 1584936000000 , 669] , [ 1585022400000 , 967] , [ 1585108800000 , 1427] , [ 1585195200000 , 1452] , [ 1585281600000 , 2129] , [ 1585368000000 , 2885] , [ 1585454400000 , 2546] , [ 1585540800000 , 2433] , [ 1585627200000 , 2619] , [ 1585713600000 , 3009] , [ 1585800000000 , 4324] , [ 1585886400000 , 4244] , [ 1585972800000 , 4450] , [ 1586059200000 , 3735] , [ 1586145600000 , 5903] , [ 1586232000000 , 3802] , [ 1586318400000 , 3634] , [ 1586404800000 , 5491] , [ 1586491200000 , 4344] , [ 1586577600000 , 5195] , [ 1586664000000 , 8719] , [ 1586750400000 , 5288] , [ 1586836800000 , 4342] , [ 1586923200000 , 5252] , ]
+            },
+            {
+             key: "Spain",
+             mean: 125,
+             values: [ [ 1584936000000 , 3646] , [ 1585022400000 , 4517] , [ 1585108800000 , 6584] , [ 1585195200000 , 7937] , [ 1585281600000 , 8578] , [ 1585368000000 , 7871] , [ 1585454400000 , 8189] , [ 1585540800000 , 6549] , [ 1585627200000 , 6398] , [ 1585713600000 , 9222] , [ 1585800000000 , 7719] , [ 1585886400000 , 8102] , [ 1585972800000 , 7472] , [ 1586059200000 , 7026] , [ 1586145600000 , 6023] , [ 1586232000000 , 4273] , [ 1586318400000 , 5478] , [ 1586404800000 , 6180] , [ 1586491200000 , 5756] , [ 1586577600000 , 4576] , [ 1586664000000 , 4830] , [ 1586750400000 , 4167] , [ 1586836800000 , 3477] , [ 1586923200000 , 3045] , ]
+             },
+            {
+                key: "Russia",
+                values: [ [ 1584936000000 , 132] , [ 1585022400000 , 0] , [ 1585108800000 , 220] , [ 1585195200000 , 182] , [ 1585281600000 , 196] , [ 1585368000000 , 228] , [ 1585454400000 , 270] , [ 1585540800000 , 0] , [ 1585627200000 , 0] , [ 1585713600000 , 303] , [ 1585800000000 , 500] , [ 1585886400000 , 440] , [ 1585972800000 , 771] , [ 1586059200000 , 601] , [ 1586145600000 , 582] , [ 1586232000000 , 658] , [ 1586318400000 , 954] , [ 1586404800000 , 1154] , [ 1586491200000 , 2634] , [ 1586577600000 , 1786] , [ 1586664000000 , 1667] , [ 1586750400000 , 2186] , [ 1586836800000 , 2558] , [ 1586923200000 , 3388] , ]
+                ,
+                mean: 60
+            },
+            
+             {
+                key: "Thailand",
+                values: [ [ 1584936000000 , 188] , [ 1585022400000 , 122] , [ 1585108800000 , 106] , [ 1585195200000 , 107] , [ 1585281600000 ,111 ] , [ 1585368000000 , 91] , [ 1585454400000 , 0] , [ 1585540800000 , 252] , [ 1585627200000 , 136] , [ 1585713600000 , 127] , [ 1585800000000 , 120] , [ 1585886400000 , 104] , [ 1585972800000 , 103] , [ 1586059200000 , 89] , [ 1586145600000 , 102] , [ 1586232000000 , 51] , [ 1586318400000 , 38] , [ 1586404800000 , 111] , [ 1586491200000 , 54] , [ 1586577600000 , 50] , [ 1586664000000 , 45] , [ 1586750400000 , 33] , [ 1586836800000 , 28] , [ 1586923200000 , 34] ,]
+             },
+             {
+                key: "India",
+                values: [ [ 1584936000000 , 93] , [ 1585022400000 , 85] , [ 1585108800000 , 87] , [ 1585195200000 , 43] , [ 1585281600000 ,75 ] , [ 1585368000000 , 0] , [ 1585454400000 , 255] , [ 1585540800000 , 92] , [ 1585627200000 , 180] , [ 1585713600000 , 385] , [ 1585800000000 , 329] , [ 1585886400000 , 336] , [ 1585972800000 , 601] , [ 1586059200000 , 472] , [ 1586145600000 , 693] , [ 1586232000000 , 354] , [ 1586318400000 , 853] , [ 1586404800000 , 591] , [ 1586491200000 , 547] , [ 1586577600000 , 1035] , [ 1586664000000 , 909] , [ 1586750400000 , 796] , [ 1586836800000 , 1211] , [ 1586923200000 , 1076] ,]
+             }
+        ];
+    }
+
+</script>
+</body></html>
